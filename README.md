@@ -1,7 +1,7 @@
 # S8050-genoa-edk2-helper
 
-This is source code setup repository for MiTAC S8050 of Genoa/OpenSIL/EDK2.
-Supported platform: S8050GM4NE-2T (https://www.mitaccomputing.com/Motherboards_S8050_S8050GM4NE-2T_EN~Spec)
+1. This is source code setup repository for MiTAC S8050 of Genoa/OpenSIL/EDK2.
+2. Supported platform: S8050GM4NE-2T (https://www.mitaccomputing.com/Motherboards_S8050_S8050GM4NE-2T_EN~Spec)
 
 
 ## Clone Repositories
