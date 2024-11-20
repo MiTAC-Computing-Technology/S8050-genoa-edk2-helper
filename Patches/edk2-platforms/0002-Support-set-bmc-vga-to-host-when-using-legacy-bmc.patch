@@ -1,0 +1,21 @@
+From 7f86ee0ab0c0a0467a25b99e21386eae81545d72 Mon Sep 17 00:00:00 2001
+From: Samba Chi <samba.chi@mitaccomputing.com>
+Date: Wed, 20 Nov 2024 12:12:15 +0800
+Subject: [PATCH 2/2] Support set bmc vga to host when using legacy bmc
+
+---
+ Platform/Intel/MinPlatformPkg/MinPlatformPkg.dec | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Platform/Intel/MinPlatformPkg/MinPlatformPkg.dec b/Platform/Intel/MinPlatformPkg/MinPlatformPkg.dec
+index e38617ce20..9dcec7d36f 100644
+--- a/Platform/Intel/MinPlatformPkg/MinPlatformPkg.dec
++++ b/Platform/Intel/MinPlatformPkg/MinPlatformPkg.dec
+@@ -338,3 +338,4 @@
+   gMinPlatformPkgTokenSpaceGuid.PcdSmiHandlerProfileEnable|FALSE|BOOLEAN|0xF00000A6
+   gMinPlatformPkgTokenSpaceGuid.PcdPerformanceEnable      |FALSE|BOOLEAN|0xF00000A7
+   gMinPlatformPkgTokenSpaceGuid.PcdSerialTerminalEnable   |FALSE|BOOLEAN|0xF00000B0
++  gMinPlatformPkgTokenSpaceGuid.PcdSetBmcVgaToHost        |FALSE|BOOLEAN|0xF00000B1
+-- 
+2.34.1
+

@@ -1,0 +1,86 @@
+From b65d2edcd86dcbe4f8fcfaea2eec6e95447d8a5b Mon Sep 17 00:00:00 2001
+From: Samba Chi <samba.chi@mitaccomputing.com>
+Date: Wed, 20 Nov 2024 12:14:23 +0800
+Subject: [PATCH 2/2] Support set bmc vga to host when using legacy bmc
+
+---
+ .../Library/BoardBdsHookLib/BoardBdsHookLib.c | 27 +++++++++++++++++++
+ .../BoardBdsHookLib/BoardBdsHookLib.inf       |  3 +++
+ 2 files changed, 30 insertions(+)
+
+diff --git a/AmdBoardPkg/Library/BoardBdsHookLib/BoardBdsHookLib.c b/AmdBoardPkg/Library/BoardBdsHookLib/BoardBdsHookLib.c
+index 357bb75..e3957ec 100644
+--- a/AmdBoardPkg/Library/BoardBdsHookLib/BoardBdsHookLib.c
++++ b/AmdBoardPkg/Library/BoardBdsHookLib/BoardBdsHookLib.c
+@@ -21,6 +21,7 @@
+ #include <Library/PciLib.h>
+ #include <Library/UefiBootManagerLib.h>
+ #include <Library/Tcg2PhysicalPresenceLib.h>
++#include <Library/IpmiBaseLib.h>
+ 
+ #include <Protocol/BlockIo.h>
+ #include <Protocol/UsbIo.h>
+@@ -1326,6 +1327,32 @@ BdsAfterConsoleReadyBeforeBootOptionCallback (
+   UINTN                         DataSize;
+ 
+   DEBUG ((DEBUG_INFO, "Event gBdsAfterConsoleReadyBeforeBootOptionEvent callback starts\n"));
++
++  if (PcdGetBool (PcdSetBmcVgaToHost)) {
++    DEBUG ((DEBUG_INFO, "Set BMC VGA mode to host\n"));
++    struct SetVgaModeReq {
++	  UINT8 MfgId[3];
++	  UINT8 VgaMode;
++    };
++
++    struct SetVgaModeReq Request;
++    Request.MfgId[0] = 0xFD;
++    Request.MfgId[1] = 0x19;
++    Request.MfgId[2] = 0x0;
++    Request.VgaMode  = 0x01;
++
++    UINT8  CompletionCode;
++    UINT32 DataSize = sizeof(CompletionCode);
++    Status = IpmiSubmitCommand (
++             0x2E,  // NetFunction
++             0x92,  // Command
++             (UINT8*)&Request,
++             sizeof(Request),
++             &CompletionCode,
++             &DataSize
++             );
++    DEBUG ((DEBUG_INFO, "IpmiSubmitCommand Result: %r\n", Status));
++  }
+   //
+   // Get current Boot Mode
+   //
+diff --git a/AmdBoardPkg/Library/BoardBdsHookLib/BoardBdsHookLib.inf b/AmdBoardPkg/Library/BoardBdsHookLib/BoardBdsHookLib.inf
+index 007bf70..6066ff4 100644
+--- a/AmdBoardPkg/Library/BoardBdsHookLib/BoardBdsHookLib.inf
++++ b/AmdBoardPkg/Library/BoardBdsHookLib/BoardBdsHookLib.inf
+@@ -34,6 +34,7 @@
+   PerformanceLib
+   TimerLib
+   Tcg2PhysicalPresenceLib
++  IpmiBaseLib
+ 
+ [Packages]
+   MdePkg/MdePkg.dec
+@@ -41,6 +42,7 @@
+   SecurityPkg/SecurityPkg.dec
+   MinPlatformPkg/MinPlatformPkg.dec
+   BoardModulePkg/BoardModulePkg.dec
++  OutOfBandManagement/IpmiFeaturePkg/IpmiFeaturePkg.dec
+ 
+ [Pcd]
+   gMinPlatformPkgTokenSpaceGuid.PcdTpm2Enable                       ## CONSUMES
+@@ -59,6 +61,7 @@
+   gMinPlatformPkgTokenSpaceGuid.PcdTrustedConsoleInputDevicePath    ## CONSUMES
+   gMinPlatformPkgTokenSpaceGuid.PcdTrustedConsoleOutputDevicePath   ## CONSUMES
+   gMinPlatformPkgTokenSpaceGuid.PcdTrustedStorageDevicePath         ## CONSUMES
++  gMinPlatformPkgTokenSpaceGuid.PcdSetBmcVgaToHost                  ## CONSUMES
+ 
+ [Sources]
+   BoardBdsHook.h
+-- 
+2.34.1
+

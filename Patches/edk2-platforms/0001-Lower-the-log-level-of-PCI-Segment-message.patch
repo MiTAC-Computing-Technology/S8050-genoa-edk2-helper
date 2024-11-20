@@ -1,0 +1,37 @@
+From 3d4cdc922e5b8d55bc7b59b8508be403c2fdc547 Mon Sep 17 00:00:00 2001
+From: Samba Chi <samba.chi@mitaccomputing.com>
+Date: Fri, 1 Nov 2024 15:53:17 +0800
+Subject: [PATCH 1/2] Lower the log level of PCI Segment message
+
+---
+ .../PciSegmentInfoLibSimple.c                      | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/Platform/Intel/MinPlatformPkg/Pci/Library/PciSegmentInfoLibSimple/PciSegmentInfoLibSimple.c b/Platform/Intel/MinPlatformPkg/Pci/Library/PciSegmentInfoLibSimple/PciSegmentInfoLibSimple.c
+index 398f4d4b78..dbd543c6c6 100644
+--- a/Platform/Intel/MinPlatformPkg/Pci/Library/PciSegmentInfoLibSimple/PciSegmentInfoLibSimple.c
++++ b/Platform/Intel/MinPlatformPkg/Pci/Library/PciSegmentInfoLibSimple/PciSegmentInfoLibSimple.c
+@@ -50,13 +50,13 @@ GetPciSegmentInfo (
+   } else {
+     mPciSegmentInfo.SegmentNumber  = 0;
+     mPciSegmentInfo.BaseAddress    = PcdGet64(PcdPciExpressBaseAddress);
+-    mPciSegmentInfo.StartBusNumber = 0;
+-    mPciSegmentInfo.EndBusNumber   = (UINT8)((PcdGet32 (PcdPciExpressRegionLength) / 0x100000) - 1);
+-
+-    DEBUG ((DEBUG_INFO, "mPciSegmentInfo.BaseAddress - 0x%x\n", mPciSegmentInfo.BaseAddress));
+-
+-    if (mPciSegmentInfo.BaseAddress == 0) {
+-      // Premem phase
++    mPciSegmentInfo.StartBusNumber = 0;
++    mPciSegmentInfo.EndBusNumber   = (UINT8)((PcdGet32 (PcdPciExpressRegionLength) / 0x100000) - 1);
++
++    DEBUG ((DEBUG_VERBOSE, "mPciSegmentInfo.BaseAddress - 0x%x\n", mPciSegmentInfo.BaseAddress));
++
++    if (mPciSegmentInfo.BaseAddress == 0) {
++      // Premem phase
+       PciSegmentInfo = BuildGuidHob (&mPciSegmentInfoHobGuid, sizeof(PCI_SEGMENT_INFO));
+       ASSERT(PciSegmentInfo != NULL);
+       if (PciSegmentInfo == NULL) {
+-- 
+2.34.1
+
